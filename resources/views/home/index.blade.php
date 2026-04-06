@@ -45,12 +45,12 @@
                 <h2 class="text-2xl font-bold text-gray-900">Featured Tools</h2>
                 <p class="text-gray-500 mt-1">Handpicked tools to supercharge your workflow</p>
             </div>
-            <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition hidden sm:block">View all tools &rarr;</a>
+            <a href="{{ route('tools.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition hidden sm:block">View all tools &rarr;</a>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            @forelse($tools as $tool)
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-indigo-200 transition group">
+            @foreach($tools as $tool)
+                <a href="{{ route('tools.show', $tool->slug) }}" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-indigo-200 transition group block">
                     <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition">
                         <svg class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.049.58.025 1.194-.14 1.743" />
@@ -59,21 +59,8 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-indigo-600 transition">{{ $tool->name }}</h3>
                     <p class="text-sm text-gray-500 line-clamp-2 mb-3">{{ $tool->description }}</p>
                     <span class="inline-flex items-center text-xs font-medium text-indigo-600 bg-indigo-50 rounded-full px-2.5 py-0.5">{{ $tool->tool_type }}</span>
-                </div>
-            @empty
-                @for($i = 0; $i < 6; $i++)
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-indigo-200 transition group">
-                        <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition">
-                            <svg class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.049.58.025 1.194-.14 1.743" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-indigo-600 transition">{{ ['VS Code Extensions', 'Laravel Debugbar', 'Tailwind Play', 'Regex101', 'Git Graph', 'Postman'][$i] }}</h3>
-                        <p class="text-sm text-gray-500 line-clamp-2 mb-3">{{ ['Essential extensions for productive coding.', 'Debug your Laravel apps with ease.', 'Experiment with Tailwind classes live.', 'Build and test regular expressions.', 'Visualize your Git history beautifully.', 'Test and document your APIs.'][$i] }}</p>
-                        <span class="inline-flex items-center text-xs font-medium text-indigo-600 bg-indigo-50 rounded-full px-2.5 py-0.5">{{ ['IDE', 'Debugging', 'CSS', 'Utility', 'Git', 'API'][$i] }}</span>
-                    </div>
-                @endfor
-            @endforelse
+                </a>
+            @endforeach
         </div>
     </section>
 
@@ -85,7 +72,7 @@
                     <h2 class="text-2xl font-bold text-gray-900">Latest Blog Posts</h2>
                     <p class="text-gray-500 mt-1">Fresh articles and tutorials from the community</p>
                 </div>
-                <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition hidden sm:block">All posts &rarr;</a>
+                <a href="{{ route('posts.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition hidden sm:block">All posts &rarr;</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
