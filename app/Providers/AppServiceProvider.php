@@ -27,5 +27,9 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('affiliate', function ($expression) {
             return "<?php echo e(config('affiliates.' . trim($expression, \"'\\\"\") . '.url', '#')); ?>";
         });
+        // Force Laravel to use native symlink() instead of exec()
+        if ($this->app->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }
