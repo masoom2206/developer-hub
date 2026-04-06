@@ -7,19 +7,38 @@ use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BlogPostSeeder extends Seeder
 {
+    private array $colors = [
+        ['#4f46e5','#7c3aed'],
+        ['#0891b2','#6366f1'],
+        ['#eab308','#f97316'],
+        ['#10b981','#059669'],
+        ['#6366f1','#8b5cf6'],
+        ['#dc2626','#f59e0b'],
+        ['#0ea5e9','#7c3aed'],
+        ['#0ea5e9','#22d3ee'],
+        ['#14b8a6','#06b6d4'],
+        ['#8b5cf6','#6366f1'],
+    ];
+
     public function run(): void
     {
         $categories = Category::pluck('id', 'slug');
 
         $posts = $this->getPosts($categories);
 
-        foreach ($posts as $postData) {
+        foreach ($posts as $i => $postData) {
             $tags = $postData['tags'];
             unset($postData['tags']);
+
+            // Generate featured image
+            $imagePath = 'posts/' . $postData['slug'] . '.svg';
+            $postData['featured_image'] = $imagePath;
+            $this->generateCoverImage($postData['title'], $categories->search($postData['category_id']) ?: 'Dev', $imagePath, $i);
 
             $post = Post::updateOrCreate(
                 ['slug' => $postData['slug']],
@@ -35,6 +54,31 @@ class BlogPostSeeder extends Seeder
 
             $post->tags()->sync($tagIds);
         }
+    }
+
+    private function generateCoverImage(string $title, string $category, string $path, int $index): void
+    {
+        $c = $this->colors[$index % count($this->colors)];
+        $catName = Category::find(Category::pluck('id', 'slug')->get($category))?->name ?? ucfirst($category);
+
+        $words = explode(' ', $title);
+        $mid = min(4, (int) ceil(count($words) / 2));
+        $line1 = htmlspecialchars(implode(' ', array_slice($words, 0, $mid)));
+        $line2 = htmlspecialchars(implode(' ', array_slice($words, $mid)));
+
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">'
+            . '<defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">'
+            . '<stop offset="0%" style="stop-color:' . $c[0] . '"/>'
+            . '<stop offset="100%" style="stop-color:' . $c[1] . '"/>'
+            . '</linearGradient></defs>'
+            . '<rect width="1200" height="630" fill="url(#g)"/>'
+            . '<g transform="translate(540,140)" opacity="0.1"><svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg></g>'
+            . '<text x="600" y="340" text-anchor="middle" fill="white" font-family="sans-serif" font-size="42" font-weight="700">' . $line1 . '</text>'
+            . '<text x="600" y="395" text-anchor="middle" fill="white" font-family="sans-serif" font-size="42" font-weight="700">' . $line2 . '</text>'
+            . '<text x="600" y="460" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="sans-serif" font-size="22">' . htmlspecialchars($catName) . ' — DevHub</text>'
+            . '</svg>';
+
+        Storage::disk('public')->put($path, $svg);
     }
 
     private function getPosts($categories): array
