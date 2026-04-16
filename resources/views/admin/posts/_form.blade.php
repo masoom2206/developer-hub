@@ -53,14 +53,57 @@
 
 {{-- Content --}}
 <div>
-    <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Content <span class="text-gray-400 font-normal">(Markdown supported)</span></label>
+    <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Content</label>
     <textarea name="content" id="content" rows="16" required
-              class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm font-mono"
-              placeholder="Write your post content in Markdown...">{{ old('content', $post->content ?? '') }}</textarea>
+              class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">{{ old('content', $post->content ?? '') }}</textarea>
     @error('content')
         <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
     @enderror
 </div>
+
+{{-- CKEditor 5 — enhances the textarea above --}}
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.3.0/ckeditor5.css">
+<style>
+    .ck-editor__editable { min-height: 400px; font-size: 0.95rem; }
+    .ck-editor__editable:focus { border-color: #6366f1 !important; box-shadow: 0 0 0 2px rgba(99,102,241,0.2) !important; }
+    .ck.ck-editor__main>.ck-editor__editable { border-radius: 0 0 0.5rem 0.5rem; }
+    .ck.ck-toolbar { border-radius: 0.5rem 0.5rem 0 0 !important; }
+</style>
+<script type="importmap">
+    { "imports": { "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/44.3.0/ckeditor5.js", "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/44.3.0/" } }
+</script>
+<script type="module">
+    import { ClassicEditor, Essentials, Bold, Italic, Strikethrough, Heading, Link, List, BlockQuote, CodeBlock, Code, HorizontalLine, Indent, Undo, SourceEditing } from 'ckeditor5';
+
+    ClassicEditor.create(document.getElementById('content'), {
+        plugins: [Essentials, Bold, Italic, Strikethrough, Heading, Link, List, BlockQuote, CodeBlock, Code, HorizontalLine, Indent, Undo, SourceEditing],
+        toolbar: {
+            items: ['undo', 'redo', '|', 'heading', '|', 'bold', 'italic', 'strikethrough', 'code', '|', 'link', 'blockQuote', 'codeBlock', 'horizontalLine', '|', 'bulletedList', 'numberedList', 'outdent', 'indent', '|', 'sourceEditing'],
+        },
+        heading: {
+            options: [
+                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+            ]
+        },
+        codeBlock: {
+            languages: [
+                { language: 'php', label: 'PHP' },
+                { language: 'javascript', label: 'JavaScript' },
+                { language: 'css', label: 'CSS' },
+                { language: 'html', label: 'HTML' },
+                { language: 'bash', label: 'Bash' },
+                { language: 'sql', label: 'SQL' },
+                { language: 'python', label: 'Python' },
+                { language: 'plaintext', label: 'Plain text' },
+            ]
+        },
+    }).catch(err => {
+        console.warn('CKEditor failed to load, textarea remains editable.', err);
+    });
+</script>
 
 {{-- Featured Image --}}
 <div>
